@@ -2,7 +2,6 @@
 #include <nodes/FlowScene>
 #include <nodes/FlowView>
 #include <nodes/ConnectionStyle>
-#include <nodes/TypeConverter>
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QVBoxLayout>
@@ -10,61 +9,31 @@
 
 #include <nodes/DataModelRegistry>
 
-#include "NumberSourceDataModel.hpp"
-#include "NumberDisplayDataModel.hpp"
-#include "AdditionModel.hpp"
-#include "SubtractionModel.hpp"
-#include "MultiplicationModel.hpp"
-#include "DivisionModel.hpp"
-#include "ModuloModel.hpp"
-#include "Converters.hpp"
-
+#include "ImageSourceDataModel.hpp"
+#include "ImageDisplayDataModel.hpp"
+#include "BlurEffectDataModel.hpp"
+#include "AlphaBlendEffectDataModel.hpp"
 
 using QtNodes::DataModelRegistry;
 using QtNodes::FlowScene;
 using QtNodes::FlowView;
 using QtNodes::ConnectionStyle;
-using QtNodes::TypeConverter;
-using QtNodes::TypeConverterId;
 
-static std::shared_ptr<DataModelRegistry>
-registerDataModels()
-{
+namespace {
+
+std::shared_ptr<DataModelRegistry> registerDataModels() {
   auto ret = std::make_shared<DataModelRegistry>();
-  ret->registerModel<NumberSourceDataModel>("Sources");
 
-  ret->registerModel<NumberDisplayDataModel>("Displays");
-
-  ret->registerModel<BlurEffectModel>("Operators");
-
-  ret->registerModel<SubtractionModel>("Operators");
-
-  ret->registerModel<MultiplicationModel>("Operators");
-
-  ret->registerModel<DivisionModel>("Operators");
-
-  ret->registerModel<ModuloModel>("Operators");
-
-  ret->registerTypeConverter(std::make_pair(DecimalData().type(),
-                                            IntegerData().type()),
-                             TypeConverter{DecimalToIntegerConverter()});
-
-
-
-  ret->registerTypeConverter(std::make_pair(IntegerData().type(),
-                                            DecimalData().type()),
-                             TypeConverter{IntegerToDecimalConverter()});
+  ret->registerModel<ImageSourceDataModel>("Sources");
+  ret->registerModel<ImageDisplayDataModel>("Displays");
+  ret->registerModel<BlurEffectDataModel>("Effects");
+  ret->registerModel<AlphaBlendEffectDataModel>("Effects");
 
   return ret;
 }
 
-
-static
-void
-setStyle()
-{
-  ConnectionStyle::setConnectionStyle(
-  R"(
+void setStyle() {
+  ConnectionStyle::setConnectionStyle(R"(
   {
     "ConnectionStyle": {
       "ConstructionColor": "gray",
@@ -79,13 +48,11 @@ setStyle()
 
       "UseDataDefinedColors": true
     }
-  }
-  )");
+  })");
 }
+} //namespace
 
-
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
   QApplication app(argc, argv);
 

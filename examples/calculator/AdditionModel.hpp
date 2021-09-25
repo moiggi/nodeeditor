@@ -11,12 +11,12 @@
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
-class AdditionModel : public MathOperationDataModel
+class BlurEffectModel : public MathOperationDataModel
 {
 public:
 
   virtual
-  ~AdditionModel() {}
+  ~BlurEffectModel() {}
 
 public:
 
