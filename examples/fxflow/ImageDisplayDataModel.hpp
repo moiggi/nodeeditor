@@ -27,7 +27,7 @@ public:
   ~ImageDisplayDataModel() override = default;
 
   QString caption() const override { return QStringLiteral("Image Display"); }
-  bool captionVisible() const override { return false; }
+  bool captionVisible() const override { return true; }
   QString name() const override { return QStringLiteral("Display"); }
 
   unsigned int nPorts(PortType portType) const override;

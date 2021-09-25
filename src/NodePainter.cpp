@@ -299,10 +299,9 @@ drawEntryLabels(QPainter * painter,
       if (model->portCaptionVisible(portType, i))
       {
         s = model->portCaption(portType, i);
-      }
-      else
-      {
-        s = model->dataType(portType, i).name;
+        if (s.isNull() || s.isEmpty()) {
+          s = model->dataType(portType, i).name;
+        }
       }
 
       auto rect = metrics.boundingRect(s);
