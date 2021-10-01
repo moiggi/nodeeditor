@@ -1,5 +1,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
+#include <QEvent>
+
 #include "ImageEffectDataModel.hpp"
 
 #include "PixmapData.hpp"
@@ -8,7 +10,9 @@ ImageEffectDataModel::ImageEffectDataModel(unsigned int numInPorts)
 : _ins(numInPorts), _label(new QLabel())
 {
   _label->setFixedSize(PixmapData::THUMBNAIL_SIZE, PixmapData::THUMBNAIL_SIZE);
-  _label->setScaledContents(true);
+  _label->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
+  _label->setStyleSheet("background-color: rgba(0,0,0,0)");
+  _label->installEventFilter(this);
 }
 
 unsigned int ImageEffectDataModel::nPorts(PortType portType) const
@@ -46,7 +50,9 @@ void ImageEffectDataModel::setInData(std::shared_ptr<NodeData> data, PortIndex p
 
     compute();
 
-    _label->setPixmap(_out->pixmap());
+    int w = _label->width();
+    int h = _label->height();
+    _label->setPixmap(_out->pixmap().scaled(w, h, Qt::KeepAspectRatio));
 
     modelValidationState = NodeValidationState::Valid;
     modelValidationError = QString();
@@ -88,3 +94,14 @@ QPixmap ImageEffectDataModel::applyEffect(const QPixmap& src, QGraphicsEffect* e
     return res;
 }
 
+bool ImageEffectDataModel::eventFilter(QObject* object, QEvent* event) {
+  if (object == _label && event->type() == QEvent::Resize) {
+    if (_out && !_out->pixmap().isNull()) {
+      int w = _label->width();
+      int h = _label->height();
+      _label->setPixmap(_out->pixmap().scaled(w, h, Qt::KeepAspectRatio));
+    }
+  }
+
+  return false;
+}

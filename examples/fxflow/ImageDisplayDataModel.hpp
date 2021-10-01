@@ -36,8 +36,13 @@ public:
 
   QWidget* embeddedWidget() override;
 
+  bool resizable() const override { return true; }
+
   NodeValidationState validationState() const override;
   QString validationMessage() const override;
+
+private:
+  bool eventFilter(QObject* object, QEvent* event) override;
 
 private:
   std::shared_ptr<PixmapData> _pixmapData;

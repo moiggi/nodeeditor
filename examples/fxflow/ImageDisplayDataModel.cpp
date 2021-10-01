@@ -2,6 +2,7 @@
 
 #include <QLabel>
 #include <QSizePolicy>
+#include <QEvent>
 
 #include "PixmapData.hpp"
 
@@ -28,9 +29,12 @@ void ImageDisplayLabel::leaveEvent(QEvent* event) {
 //  updateGeometry();
 }
 
+
 ImageDisplayDataModel::ImageDisplayDataModel() : _label(new ImageDisplayLabel()) {
   _label->setFixedSize(PixmapData::THUMBNAIL_SIZE, PixmapData::THUMBNAIL_SIZE);
-  _label->setScaledContents(true);
+  _label->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
+  _label->setStyleSheet("background-color: rgba(0,0,0,0)");
+  _label->installEventFilter(this);
 }
 
 
@@ -63,7 +67,10 @@ void ImageDisplayDataModel::setInData(std::shared_ptr<NodeData> data, int) {
   if (inPixmapData) {
     _pixmapData = std::make_shared<PixmapData>();
     _pixmapData->setPixmap(inPixmapData->pixmap());
-    _label->setPixmap(_pixmapData->pixmap());
+
+    int w = _label->width();
+    int h = _label->height();
+    _label->setPixmap(_pixmapData->pixmap().scaled(w, h, Qt::KeepAspectRatio));
 
     modelValidationState = NodeValidationState::Valid;
     modelValidationError = QString();
@@ -75,10 +82,10 @@ void ImageDisplayDataModel::setInData(std::shared_ptr<NodeData> data, int) {
 }
 
 
-QWidget* ImageDisplayDataModel::embeddedWidget()
-{
+QWidget* ImageDisplayDataModel::embeddedWidget() {
   return _label;
 }
+
 
 NodeValidationState ImageDisplayDataModel::validationState() const {
   return modelValidationState;
@@ -87,4 +94,16 @@ NodeValidationState ImageDisplayDataModel::validationState() const {
 
 QString ImageDisplayDataModel::validationMessage() const {
   return modelValidationError;
+}
+
+bool ImageDisplayDataModel::eventFilter(QObject* object, QEvent* event) {
+  if (object == _label && event->type() == QEvent::Resize) {
+    if (_pixmapData && !_pixmapData->pixmap().isNull()) {
+      int w = _label->width();
+      int h = _label->height();
+      _label->setPixmap(_pixmapData->pixmap().scaled(w, h, Qt::KeepAspectRatio));
+    }
+  }
+
+  return false;
 }

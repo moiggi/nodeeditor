@@ -3,11 +3,14 @@
 #include <nodes/FlowView>
 #include <nodes/ConnectionStyle>
 
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QMenuBar>
+#include <QApplication>
+#include <QMenuBar>
+#include <QMainWindow>
+#include <QScreen>
 
 #include <nodes/DataModelRegistry>
+
+#include "ui_mainwindow.h"
 
 #include "ImageSourceDataModel.hpp"
 #include "ImageDisplayDataModel.hpp"
@@ -58,29 +61,20 @@ int main(int argc, char *argv[])
 
   setStyle();
 
-  QWidget mainWidget;
+  QMainWindow mainWindow;
+  Ui::MainWindow ui;
+  ui.setupUi(&mainWindow);
 
-  auto menuBar    = new QMenuBar();
-  auto saveAction = menuBar->addAction("Save..");
-  auto loadAction = menuBar->addAction("Load..");
+  auto scene = new FlowScene(registerDataModels(), &mainWindow);
+  ui.effectNodeView->setScene(scene);
 
-  QVBoxLayout *l = new QVBoxLayout(&mainWidget);
+  int screenHeight = QGuiApplication::primaryScreen()->size().height();
+  ui.imageNodeViewSplitter->setSizes({screenHeight*2/3, screenHeight*1/3});
+  int screenWidth = QGuiApplication::primaryScreen()->size().width();
+  ui.effectUISplitter->setSizes({screenWidth*3/4, screenWidth*1/4});
 
-  l->addWidget(menuBar);
-  auto scene = new FlowScene(registerDataModels(), &mainWidget);
-  l->addWidget(new FlowView(scene));
-  l->setContentsMargins(0, 0, 0, 0);
-  l->setSpacing(0);
-
-  QObject::connect(saveAction, &QAction::triggered,
-                   scene, &FlowScene::save);
-
-  QObject::connect(loadAction, &QAction::triggered,
-                   scene, &FlowScene::load);
-
-  mainWidget.setWindowTitle("Dataflow tools: simplest calculator");
-  mainWidget.resize(800, 600);
-  mainWidget.showNormal();
+  mainWindow.setWindowTitle("FxFlow");
+  mainWindow.showMaximized();
 
   return app.exec();
 }

@@ -52,6 +52,8 @@ ImageSourceDataModel::ImageSourceDataModel() {
 
   loadImage(":/images/SunnyDay.jpg");
 //  loadImage("/home/andy/DevHome/externals/nodeeditor/examples/fxflow/resources/SunnyDay.jpg");
+
+  _imageButton->installEventFilter(this);
 }
 
 
@@ -122,6 +124,17 @@ std::shared_ptr<NodeData> ImageSourceDataModel::outData(PortIndex) {
 
 QWidget *ImageSourceDataModel::embeddedWidget() {
   return _imageButton;
+}
+
+bool ImageSourceDataModel::eventFilter(QObject *object, QEvent *event)
+{
+  if (object == _imageButton && event->type() == QEvent::Resize) {
+    int w = _imageButton->width();
+    int h = _imageButton->height();
+    _imageButton->setIconSize(QSize(w, h));
+  }
+
+  return false;
 }
 
 bool ImageSourceDataModel::loadImage(const QString &fileName) {

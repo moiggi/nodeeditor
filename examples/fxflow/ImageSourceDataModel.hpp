@@ -38,10 +38,14 @@ public:
   
   QWidget* embeddedWidget() override;
 
+  bool resizable() const override { return true; }
+
 private Q_SLOTS:
   void onImageButtonClicked(bool);
 
 private:
+  bool eventFilter(QObject* object, QEvent* event) override;
+
   bool loadImage(const QString& fileName);
 
 private:

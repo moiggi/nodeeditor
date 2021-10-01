@@ -36,6 +36,8 @@ public:
   bool captionVisible() const override { return true; }
   QWidget* embeddedWidget() override { return _label; }
 
+  bool resizable() const override { return true; }
+
   NodeValidationState validationState() const override;
   QString validationMessage() const override;
 
@@ -43,6 +45,8 @@ protected:
   virtual void compute() = 0;
 
   QPixmap applyEffect(const QPixmap& src, QGraphicsEffect* effect);
+
+  bool eventFilter(QObject* object, QEvent* event) override;
 
 protected:
   std::vector<std::weak_ptr<PixmapData>> _ins;
