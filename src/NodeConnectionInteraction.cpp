@@ -111,6 +111,16 @@ tryConnect() const
 
   // 2) Assign node to required port in Connection
   PortType requiredPort = connectionRequiredPort();
+
+  if (requiredPort == PortType::In && !_node->nodeState().connections(PortType::In, portIndex).empty()) {
+    const auto inPolicy = _node->nodeDataModel()->portInConnectionPolicy(portIndex);
+    if (inPolicy == NodeDataModel::InConnectionPolicy::Substitute) {
+      //remove the connection
+      auto connections = _node->nodeState().connections(PortType::In, portIndex);
+      _scene->deleteConnection(*connections.begin()->second);
+    }
+  }
+
   _node->nodeState().setConnection(requiredPort,
                                    portIndex,
                                    *_connection);
@@ -123,7 +133,7 @@ tryConnect() const
 
   _node->nodeGraphicsObject().moveConnections();
 
-  // 5) Poke model to intiate data transfer
+  // 5) Poke model to initiate data transfer
 
   auto outNode = _connection->getNode(PortType::Out);
   if (outNode)
@@ -233,6 +243,12 @@ nodePortIsEmpty(PortType portType, PortIndex portIndex) const
 
   if (entries[portIndex].empty()) return true;
 
-  const auto outPolicy = _node->nodeDataModel()->portOutConnectionPolicy(portIndex);
-  return ( portType == PortType::Out && outPolicy == NodeDataModel::ConnectionPolicy::Many);
+  if (portType == PortType::Out) {
+    const auto outPolicy = _node->nodeDataModel()->portOutConnectionPolicy(portIndex);
+    return outPolicy == NodeDataModel::OutConnectionPolicy::Many;
+  } else { // PortType::In
+    const auto inPolicy = _node->nodeDataModel()->portInConnectionPolicy(portIndex);
+    return inPolicy == NodeDataModel::InConnectionPolicy::Substitute;
+
+  }
 }

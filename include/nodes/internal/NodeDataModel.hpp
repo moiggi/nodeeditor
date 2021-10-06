@@ -74,17 +74,30 @@ public:
 
 public:
 
-  enum class ConnectionPolicy
+  enum class OutConnectionPolicy
   {
     One,
     Many,
   };
 
   virtual
-  ConnectionPolicy
+  OutConnectionPolicy
   portOutConnectionPolicy(PortIndex) const
   {
-    return ConnectionPolicy::Many;
+    return OutConnectionPolicy::Many;
+  }
+
+  enum class InConnectionPolicy
+  {
+    Fixed,
+    Substitute,
+  };
+
+  virtual
+  InConnectionPolicy
+  portInConnectionPolicy(PortIndex) const
+  {
+    return InConnectionPolicy::Substitute;
   }
 
   NodeStyle const&
