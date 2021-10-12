@@ -1,5 +1,7 @@
 #include "StyleCollection.hpp"
 
+#include <utility>
+
 using QtNodes::StyleCollection;
 using QtNodes::NodeStyle;
 using QtNodes::ConnectionStyle;
@@ -7,9 +9,15 @@ using QtNodes::FlowViewStyle;
 
 NodeStyle const&
 StyleCollection::
-nodeStyle()
+nodeStyle(const QString& styleId)
 {
-  return instance()._nodeStyle;
+  const auto& styles = instance()._nodeStyles;
+  auto s = styles.nodeStyles.find(styleId);
+  if (s != styles.nodeStyles.end()) {
+    return s->second;
+  } else {
+    return styles.baseStyle;
+  }
 }
 
 
@@ -31,9 +39,9 @@ flowViewStyle()
 
 void
 StyleCollection::
-setNodeStyle(NodeStyle nodeStyle)
+setNodeStyle(NodeStyles nodeStyles)
 {
-  instance()._nodeStyle = nodeStyle;
+  instance()._nodeStyles = std::move(nodeStyles);
 }
 
 
@@ -41,7 +49,7 @@ void
 StyleCollection::
 setConnectionStyle(ConnectionStyle connectionStyle)
 {
-  instance()._connectionStyle = connectionStyle;
+  instance()._connectionStyle = std::move(connectionStyle);
 }
 
 
@@ -49,7 +57,7 @@ void
 StyleCollection::
 setFlowViewStyle(FlowViewStyle flowViewStyle)
 {
-  instance()._flowViewStyle = flowViewStyle;
+  instance()._flowViewStyle = std::move(flowViewStyle);
 }
 
 

@@ -48,6 +48,9 @@ protected:
 
   bool eventFilter(QObject* object, QEvent* event) override;
 
+  QString styleId() const override { return "ImageEffect"; }
+
+
 protected:
   std::vector<std::weak_ptr<PixmapData>> _ins;
   std::shared_ptr<PixmapData> _out;

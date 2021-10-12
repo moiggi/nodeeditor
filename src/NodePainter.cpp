@@ -71,7 +71,7 @@ drawNodeRect(QPainter* painter,
 
   auto color = graphicsObject.isSelected()
                ? nodeStyle.SelectedBoundaryColor
-               : nodeStyle.NormalBoundaryColor;
+               : nodeStyle.BoundaryColor;
 
   if (geom.hovered())
   {
@@ -80,17 +80,26 @@ drawNodeRect(QPainter* painter,
   }
   else
   {
-    QPen p(color, nodeStyle.PenWidth);
+    float width = graphicsObject.isSelected()
+                  ? nodeStyle.SelectedPenWidth
+                  : nodeStyle.PenWidth;
+    QPen p(color, width);
     painter->setPen(p);
   }
 
   QLinearGradient gradient(QPointF(0.0, 0.0),
                            QPointF(2.0, geom.height()));
-
-  gradient.setColorAt(0.0, nodeStyle.GradientColor0);
-  gradient.setColorAt(0.03, nodeStyle.GradientColor1);
-  gradient.setColorAt(0.97, nodeStyle.GradientColor2);
-  gradient.setColorAt(1.0, nodeStyle.GradientColor3);
+  if (graphicsObject.isSelected()) {
+    gradient.setColorAt(0.00, nodeStyle.SelectedGradientColor0);
+    gradient.setColorAt(0.03, nodeStyle.SelectedGradientColor1);
+    gradient.setColorAt(0.97, nodeStyle.SelectedGradientColor2);
+    gradient.setColorAt(1.00, nodeStyle.SelectedGradientColor3);
+  } else {
+    gradient.setColorAt(0.00, nodeStyle.GradientColor0);
+    gradient.setColorAt(0.03, nodeStyle.GradientColor1);
+    gradient.setColorAt(0.97, nodeStyle.GradientColor2);
+    gradient.setColorAt(1.00, nodeStyle.GradientColor3);
+  }
 
   painter->setBrush(gradient);
 
@@ -361,7 +370,7 @@ drawValidationRect(QPainter * painter,
 
     auto color = graphicsObject.isSelected()
                  ? nodeStyle.SelectedBoundaryColor
-                 : nodeStyle.NormalBoundaryColor;
+                 : nodeStyle.BoundaryColor;
 
     if (geom.hovered())
     {

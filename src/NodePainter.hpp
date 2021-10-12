@@ -10,15 +10,10 @@ class NodeState;
 class NodeGeometry;
 class NodeGraphicsObject;
 class NodeDataModel;
-class FlowItemEntry;
 class FlowScene;
 
 class NodePainter
 {
-public:
-
-  NodePainter();
-
 public:
 
   static

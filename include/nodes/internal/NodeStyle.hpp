@@ -1,9 +1,14 @@
 #pragma once
 
+#include <map>
+
 #include <QtGui/QColor>
 
 #include "Export.hpp"
 #include "Style.hpp"
+
+class QJsonObject;
+class QJsonDocument;
 
 namespace QtNodes
 {
@@ -20,6 +25,8 @@ public:
 
   static void setNodeStyle(QString jsonText);
 
+  void loadStyle(const QJsonObject& style);
+
 private:
 
   void loadJsonText(QString jsonText) override;
@@ -30,12 +37,18 @@ private:
 
 public:
 
-  QColor NormalBoundaryColor;
-  QColor SelectedBoundaryColor;
+  QColor BoundaryColor;
   QColor GradientColor0;
   QColor GradientColor1;
   QColor GradientColor2;
   QColor GradientColor3;
+
+  QColor SelectedBoundaryColor;
+  QColor SelectedGradientColor0;
+  QColor SelectedGradientColor1;
+  QColor SelectedGradientColor2;
+  QColor SelectedGradientColor3;
+
   QColor ShadowColor;
   QColor FontColor;
   QColor FontColorFaded;
@@ -47,6 +60,7 @@ public:
   QColor ErrorColor;
 
   float PenWidth;
+  float SelectedPenWidth;
   float HoveredPenWidth;
 
   float ConnectionPointDiameter;

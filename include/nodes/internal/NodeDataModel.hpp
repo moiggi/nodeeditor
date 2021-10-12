@@ -2,6 +2,7 @@
 
 
 #include <QtWidgets/QWidget>
+#include <QString>
 
 #include "PortType.hpp"
 #include "NodeData.hpp"
@@ -36,8 +37,7 @@ public:
 
   NodeDataModel();
 
-  virtual
-  ~NodeDataModel() = default;
+  ~NodeDataModel() override = default;
 
   /// Caption is used in GUI
   virtual QString
@@ -100,11 +100,12 @@ public:
     return InConnectionPolicy::Substitute;
   }
 
-  NodeStyle const&
+  // derived classes can define specific style here. The default behavior is to load the style
+  // of styleId() from the style collection
+  virtual NodeStyle const&
   nodeStyle() const;
 
-  void
-  setNodeStyle(NodeStyle const& style);
+  virtual QString styleId() const { return {}; }
 
 public:
 
@@ -175,8 +176,5 @@ Q_SIGNALS:
 
   void embeddedWidgetSizeUpdated();
 
-private:
-
-  NodeStyle _nodeStyle;
 };
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include "NodeStyle.hpp"
 #include "ConnectionStyle.hpp"
 #include "FlowViewStyle.hpp"
@@ -11,10 +13,16 @@ namespace QtNodes
 class NODE_EDITOR_PUBLIC StyleCollection
 {
 public:
+  struct NodeStyles {
+    NodeStyle baseStyle;
+    std::map<QString /*node data model name*/, NodeStyle> nodeStyles;
+  };
+
+public:
 
   static
   NodeStyle const&
-  nodeStyle();
+  nodeStyle(const QString& styleId);
 
   static
   ConnectionStyle const&
@@ -28,7 +36,7 @@ public:
 
   static
   void
-  setNodeStyle(NodeStyle);
+  setNodeStyle(NodeStyles);
 
   static
   void
@@ -53,7 +61,7 @@ private:
 
 private:
 
-  NodeStyle _nodeStyle;
+  NodeStyles _nodeStyles;
 
   ConnectionStyle _connectionStyle;
 

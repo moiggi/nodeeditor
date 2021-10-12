@@ -67,7 +67,7 @@ QRectF
 NodeGeometry::
 boundingRect() const
 {
-  auto const &nodeStyle = StyleCollection::nodeStyle();
+  auto const &nodeStyle = StyleCollection::nodeStyle(_dataModel->name());
 
   double addon = 4 * nodeStyle.ConnectionPointDiameter;
 
@@ -146,7 +146,7 @@ portScenePosition(PortIndex index,
                   PortType portType,
                   QTransform const & t) const
 {
-  auto const &nodeStyle = StyleCollection::nodeStyle();
+  auto const &nodeStyle = StyleCollection::nodeStyle(_dataModel->name());
 
   unsigned int step = _entryHeight + _spacing;
 
@@ -193,7 +193,7 @@ checkHitScenePoint(PortType portType,
                    QPointF const scenePoint,
                    QTransform const & sceneTransform) const
 {
-  auto const &nodeStyle = StyleCollection::nodeStyle();
+  auto const &nodeStyle = StyleCollection::nodeStyle(_dataModel->name());
 
   PortIndex result = INVALID;
 

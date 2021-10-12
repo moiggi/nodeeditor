@@ -47,7 +47,7 @@ setStyle()
   R"(
   {
     "NodeStyle": {
-      "NormalBoundaryColor": "darkgray",
+      "BoundaryColor": "darkgray",
       "SelectedBoundaryColor": "deepskyblue",
       "GradientColor0": "mintcream",
       "GradientColor1": "mintcream",

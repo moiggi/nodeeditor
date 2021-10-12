@@ -48,6 +48,8 @@ private:
 
   bool loadImage(const QString& fileName);
 
+  QString styleId() const override { return "ImageSource"; }
+
 private:
   std::shared_ptr<PixmapData> _pixmapData;
 

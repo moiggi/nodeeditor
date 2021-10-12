@@ -240,20 +240,18 @@ setNodeToPort(Node& node,
               PortType portType,
               PortIndex portIndex)
 {
-  bool wasIncomplete = !complete();
-
-  auto& nodeWeak = getNode(portType);
-
-  nodeWeak = &node;
-
-  if (portType == PortType::Out)
+  if (portType == PortType::Out) {
+    _outNode = &node;
     _outPortIndex = portIndex;
-  else
+  } else {
+    _inNode = &node;
     _inPortIndex = portIndex;
+  }
 
   _connectionState.setNoRequiredPort();
 
   updated(*this);
+  bool wasIncomplete = !complete();
   if (complete() && wasIncomplete) {
     connectionCompleted(*this);
   }

@@ -36,7 +36,7 @@ public:
 
   /// New Connection is attached to the port of the given Node.
   /// The port has parameters (portType, portIndex).
-  /// The opposite connection end will require anothre port.
+  /// The opposite connection end will require another port.
   Connection(PortType portType,
              Node& node,
              PortIndex portIndex);
@@ -45,13 +45,12 @@ public:
              PortIndex portIndexIn,
              Node& nodeOut,
              PortIndex portIndexOut,
-             TypeConverter converter =
-               TypeConverter{});
+             TypeConverter converter = TypeConverter{});
 
   Connection(const Connection&) = delete;
   Connection operator=(const Connection&) = delete;
 
-  ~Connection();
+  ~Connection() override;
 
 public:
 

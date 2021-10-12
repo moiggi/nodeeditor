@@ -28,7 +28,7 @@ public:
 
   QString caption() const override { return QStringLiteral("Image Display"); }
   bool captionVisible() const override { return true; }
-  QString name() const override { return QStringLiteral("Display"); }
+  QString name() const override { return QStringLiteral("Image Display"); }
 
   unsigned int nPorts(PortType portType) const override;
   NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
@@ -43,6 +43,8 @@ public:
 
 private:
   bool eventFilter(QObject* object, QEvent* event) override;
+
+  QString styleId() const override { return "ImageDisplay"; }
 
 private:
   std::shared_ptr<PixmapData> _pixmapData;

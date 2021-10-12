@@ -1,6 +1,8 @@
 #include <nodes/NodeData>
 #include <nodes/FlowScene>
 #include <nodes/FlowView>
+#include <nodes/FlowViewStyle>
+#include <nodes/NodeStyle>
 #include <nodes/ConnectionStyle>
 
 #include <QApplication>
@@ -9,6 +11,7 @@
 #include <QScreen>
 
 #include <nodes/DataModelRegistry>
+#include <QFile>
 
 #include "ui_mainwindow.h"
 
@@ -20,7 +23,6 @@
 using QtNodes::DataModelRegistry;
 using QtNodes::FlowScene;
 using QtNodes::FlowView;
-using QtNodes::ConnectionStyle;
 
 namespace {
 
@@ -36,23 +38,19 @@ std::shared_ptr<DataModelRegistry> registerDataModels() {
 }
 
 void setStyle() {
-  ConnectionStyle::setConnectionStyle(R"(
+  QFile file(":Style.json");
+  if (!file.open(QIODevice::ReadOnly))
   {
-    "ConnectionStyle": {
-      "ConstructionColor": "gray",
-      "NormalColor": "black",
-      "SelectedColor": "gray",
-      "SelectedHaloColor": "deepskyblue",
-      "HoveredColor": "deepskyblue",
+    qWarning() << "Couldn't open Style.json";
+    return;
+  }
+  QString style = file.readAll();
 
-      "LineWidth": 3.0,
-      "ConstructionLineWidth": 2.0,
-      "PointDiameter": 10.0,
-
-      "UseDataDefinedColors": true
-    }
-  })");
+  QtNodes::FlowViewStyle::setStyle(style);
+  QtNodes::NodeStyle::setNodeStyle(style);
+  QtNodes::ConnectionStyle::setConnectionStyle(style);
 }
+
 } //namespace
 
 int main(int argc, char *argv[])

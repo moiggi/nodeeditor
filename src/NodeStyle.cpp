@@ -1,7 +1,5 @@
 #include "NodeStyle.hpp"
 
-#include <iostream>
-
 #include <QtCore/QFile>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
@@ -16,10 +14,66 @@ using QtNodes::NodeStyle;
 
 inline void initResources() { Q_INIT_RESOURCE(resources); }
 
+#define NODE_STYLE_READ_COLOR(values, variable) readColor(values, #variable, variable)
+#define NODE_STYLE_READ_FLOAT(values, variable) readFloat(values, #variable, variable)
+
+namespace
+{
+  void readColor(const QJsonObject& values, const char* variableName, QColor& variable)
+  {
+    auto value = values[variableName];
+    if (value.type() == QJsonValue::Undefined || value.type() == QJsonValue::Null) {
+      qDebug() << "Undefined value for parameter:" << variableName;
+    } else {
+      if (value.isArray()) {
+        auto colorArray = value.toArray();
+        std::vector<int> rgb;
+        rgb.reserve(3);
+        for (auto &&it: colorArray) {
+          rgb.push_back(it.toInt());
+        }
+        variable = QColor(rgb[0], rgb[1], rgb[2]);
+      } else {
+        variable = QColor(value.toString());
+      }
+    }
+  }
+
+  void readFloat(const QJsonObject& values, const char* variableName, float& variable)
+  {
+    auto value = values[variableName];
+    if (value.type() == QJsonValue::Undefined || value.type() == QJsonValue::Null) {
+      qDebug() << "Undefined value for parameter:" << variableName;
+    } else {
+      variable = static_cast<float>(value.toDouble());
+    }
+  }
+
+  QtNodes::StyleCollection::NodeStyles loadNodeStyles(const QJsonDocument& json)
+  {
+    QJsonObject topLevelObject = json.object();
+    QJsonObject nodeStyleObject = topLevelObject["NodeStyle"].toObject();
+
+    QtNodes::StyleCollection::NodeStyles styles;
+    styles.baseStyle.loadStyle(nodeStyleObject);
+
+    QJsonObject nodesObject = nodeStyleObject["Nodes"].toObject();
+    for (auto i = nodesObject.begin(), i_end = nodesObject.end(); i != i_end; ++i) {
+      Q_ASSERT(styles.nodeStyles.find(i.key()) == styles.nodeStyles.end()); // should not have duplicates
+      NodeStyle nodeStyle = styles.baseStyle;
+      nodeStyle.loadStyle(i.value().toObject());
+      styles.nodeStyles[i.key()] = nodeStyle;
+    }
+
+    return styles;
+  }
+
+}
+
 NodeStyle::
 NodeStyle()
 {
-  // Explicit resources inialization for preventing the static initialization
+  // Explicit resources initialization for preventing the static initialization
   // order fiasco: https://isocpp.org/wiki/faq/ctors#static-init-order
   initResources();
 
@@ -39,43 +93,10 @@ void
 NodeStyle::
 setNodeStyle(QString jsonText)
 {
-  NodeStyle style(jsonText);
-
-
-  StyleCollection::setNodeStyle(style);
+  auto styles = loadNodeStyles(QJsonDocument::fromJson(jsonText.toUtf8()));
+  StyleCollection::setNodeStyle(styles);
 }
 
-
-#ifdef STYLE_DEBUG
-  #define NODE_STYLE_CHECK_UNDEFINED_VALUE(v, variable) { \
-      if (v.type() == QJsonValue::Undefined || \
-          v.type() == QJsonValue::Null) \
-        qWarning() << "Undefined value for parameter:" << #variable; \
-  }
-#else
-  #define NODE_STYLE_CHECK_UNDEFINED_VALUE(v, variable)
-#endif
-
-#define NODE_STYLE_READ_COLOR(values, variable)  { \
-    auto valueRef = values[#variable]; \
-    NODE_STYLE_CHECK_UNDEFINED_VALUE(valueRef, variable) \
-    if (valueRef.isArray()) { \
-      auto colorArray = valueRef.toArray(); \
-      std::vector<int> rgb; rgb.reserve(3); \
-      for (auto it = colorArray.begin(); it != colorArray.end(); ++it) { \
-        rgb.push_back((*it).toInt()); \
-      } \
-      variable = QColor(rgb[0], rgb[1], rgb[2]); \
-    } else { \
-      variable = QColor(valueRef.toString()); \
-    } \
-}
-
-#define NODE_STYLE_READ_FLOAT(values, variable)  { \
-    auto valueRef = values[#variable]; \
-    NODE_STYLE_CHECK_UNDEFINED_VALUE(valueRef, variable) \
-    variable = valueRef.toDouble(); \
-}
 
 void
 NodeStyle::
@@ -110,27 +131,36 @@ loadJsonFromByteArray(QByteArray const &byteArray)
 
   QJsonObject topLevelObject = json.object();
 
-  QJsonValueRef nodeStyleValues = topLevelObject["NodeStyle"];
+  loadStyle(topLevelObject["NodeStyle"].toObject());
+}
 
-  QJsonObject obj = nodeStyleValues.toObject();
+void NodeStyle::loadStyle(const QJsonObject& style)
+{
+  NODE_STYLE_READ_COLOR(style, BoundaryColor);
+  NODE_STYLE_READ_COLOR(style, GradientColor0);
+  NODE_STYLE_READ_COLOR(style, GradientColor1);
+  NODE_STYLE_READ_COLOR(style, GradientColor2);
+  NODE_STYLE_READ_COLOR(style, GradientColor3);
 
-  NODE_STYLE_READ_COLOR(obj, NormalBoundaryColor);
-  NODE_STYLE_READ_COLOR(obj, SelectedBoundaryColor);
-  NODE_STYLE_READ_COLOR(obj, GradientColor0);
-  NODE_STYLE_READ_COLOR(obj, GradientColor1);
-  NODE_STYLE_READ_COLOR(obj, GradientColor2);
-  NODE_STYLE_READ_COLOR(obj, GradientColor3);
-  NODE_STYLE_READ_COLOR(obj, ShadowColor);
-  NODE_STYLE_READ_COLOR(obj, FontColor);
-  NODE_STYLE_READ_COLOR(obj, FontColorFaded);
-  NODE_STYLE_READ_COLOR(obj, ConnectionPointColor);
-  NODE_STYLE_READ_COLOR(obj, FilledConnectionPointColor);
-  NODE_STYLE_READ_COLOR(obj, WarningColor);
-  NODE_STYLE_READ_COLOR(obj, ErrorColor);
+  NODE_STYLE_READ_COLOR(style, SelectedBoundaryColor);
+  NODE_STYLE_READ_COLOR(style, SelectedGradientColor0);
+  NODE_STYLE_READ_COLOR(style, SelectedGradientColor1);
+  NODE_STYLE_READ_COLOR(style, SelectedGradientColor2);
+  NODE_STYLE_READ_COLOR(style, SelectedGradientColor3);
 
-  NODE_STYLE_READ_FLOAT(obj, PenWidth);
-  NODE_STYLE_READ_FLOAT(obj, HoveredPenWidth);
-  NODE_STYLE_READ_FLOAT(obj, ConnectionPointDiameter);
+  NODE_STYLE_READ_COLOR(style, ShadowColor);
+  NODE_STYLE_READ_COLOR(style, FontColor);
+  NODE_STYLE_READ_COLOR(style, FontColorFaded);
+  NODE_STYLE_READ_COLOR(style, ConnectionPointColor);
+  NODE_STYLE_READ_COLOR(style, FilledConnectionPointColor);
+  NODE_STYLE_READ_COLOR(style, WarningColor);
+  NODE_STYLE_READ_COLOR(style, ErrorColor);
 
-  NODE_STYLE_READ_FLOAT(obj, Opacity);
+  NODE_STYLE_READ_FLOAT(style, PenWidth);
+  NODE_STYLE_READ_FLOAT(style, SelectedPenWidth);
+  NODE_STYLE_READ_FLOAT(style, HoveredPenWidth);
+
+  NODE_STYLE_READ_FLOAT(style, ConnectionPointDiameter);
+
+  NODE_STYLE_READ_FLOAT(style, Opacity);
 }
