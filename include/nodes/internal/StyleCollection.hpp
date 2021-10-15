@@ -15,7 +15,12 @@ class NODE_EDITOR_PUBLIC StyleCollection
 public:
   struct NodeStyles {
     NodeStyle baseStyle;
-    std::map<QString /*node data model name*/, NodeStyle> nodeStyles;
+    std::map<QString /*node data model style id*/, NodeStyle> nodeStyles;
+  };
+
+  struct ConnectionStyles {
+    ConnectionStyle baseStyle;
+    std::map<QString /*data style id*/, ConnectionStyle> connectionStyles;
   };
 
 public:
@@ -26,7 +31,7 @@ public:
 
   static
   ConnectionStyle const&
-  connectionStyle();
+  connectionStyle(const QString& styleId);
 
   static
   FlowViewStyle const&
@@ -40,7 +45,7 @@ public:
 
   static
   void
-  setConnectionStyle(ConnectionStyle);
+  setConnectionStyle(ConnectionStyles);
 
   static
   void
@@ -63,7 +68,7 @@ private:
 
   NodeStyles _nodeStyles;
 
-  ConnectionStyle _connectionStyle;
+  ConnectionStyles _connectionStyles;
 
   FlowViewStyle _flowViewStyle;
 };

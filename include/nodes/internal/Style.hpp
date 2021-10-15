@@ -1,6 +1,9 @@
 #pragma once
 
 #include <QtCore/QString>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QColor>
 
 namespace QtNodes
 {
@@ -12,16 +15,47 @@ public:
   virtual
   ~Style() = default;
 
-private:
+protected:
+  static void readColor(const QJsonObject& values, const char* variableName, QColor& variable)
+  {
+    auto value = values[variableName];
+    if (value.type() == QJsonValue::Undefined || value.type() == QJsonValue::Null) {
+      qDebug() << "Undefined value for parameter:" << variableName;
+    } else {
+      if (value.isArray()) {
+        auto colorArray = value.toArray();
+        std::vector<int> rgb;
+        rgb.reserve(3);
+        for (auto &&it: colorArray) {
+          rgb.push_back(it.toInt());
+        }
+        variable = QColor(rgb[0], rgb[1], rgb[2]);
+      } else {
+        variable = QColor(value.toString());
+      }
+    }
+  }
 
-  virtual void
-  loadJsonText(QString jsonText) = 0;
+  static void readFloat(const QJsonObject& values, const char* variableName, float& variable)
+  {
+    auto value = values[variableName];
+    if (value.type() == QJsonValue::Undefined || value.type() == QJsonValue::Null) {
+      qDebug() << "Undefined value for parameter:" << variableName;
+    } else {
+      variable = static_cast<float>(value.toDouble());
+    }
+  }
 
-  virtual void
-  loadJsonFile(QString fileName) = 0;
+  static void readBool(const QJsonObject& values, const char* variableName, bool& variable)
+  {
+    auto value = values[variableName];
+    if (value.type() == QJsonValue::Undefined || value.type() == QJsonValue::Null) {
+      qDebug() << "Undefined value for parameter:" << variableName;
+    } else {
+      variable = value.toBool();
+    }
+  }
 
-  virtual void
-  loadJsonFromByteArray(QByteArray const &byteArray) = 0;
 };
 
 }

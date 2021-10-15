@@ -21,8 +21,6 @@
     "ShadowColor": [100, 100, 100],
     "FontColor" : "white",
     "FontColorFaded" : "gray",
-    "ConnectionPointColor": [169, 169, 169],
-    "FilledConnectionPointColor": "cyan",
     "ErrorColor": "red",
     "WarningColor": "orange",
 
@@ -57,10 +55,18 @@
     "SelectedHaloColor": "deepskyblue",
     "HoveredColor": "deepskyblue",
 
+    "ConnectionPointColor": [169, 169, 169],
+    "FilledConnectionPointColor": "cyan",
+
     "LineWidth": 3.0,
     "ConstructionLineWidth": 2.0,
     "PointDiameter": 10.0,
 
-    "UseDataDefinedColors": true
+    "Data": {
+      "pixmap": {
+        "ConnectionPointColor": "yellow",
+        "FilledConnectionPointColor": "orange"
+      }
+    }
   }
 }

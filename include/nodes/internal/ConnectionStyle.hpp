@@ -14,36 +14,23 @@ public:
 
   ConnectionStyle();
 
-  ConnectionStyle(QString jsonText);
+  explicit ConnectionStyle(QString jsonText);
 
 public:
 
   static void setConnectionStyle(QString jsonText);
 
+  void loadStyle(const QJsonObject& style);
+
 private:
 
-  void loadJsonText(QString jsonText) override;
+  void loadJsonText(QString jsonText);
 
-  void loadJsonFile(QString fileName) override;
+  void loadJsonFile(QString fileName);
 
-  void loadJsonFromByteArray(QByteArray const &byteArray) override;
+  void loadJsonFromByteArray(QByteArray const &byteArray);
 
 public:
-
-  QColor constructionColor() const;
-  QColor normalColor() const;
-  QColor normalColor(QString typeId) const;
-  QColor selectedColor() const;
-  QColor selectedHaloColor() const;
-  QColor hoveredColor() const;
-
-  float lineWidth() const;
-  float constructionLineWidth() const;
-  float pointDiameter() const;
-
-  bool useDataDefinedColors() const;
-
-private:
 
   QColor ConstructionColor;
   QColor NormalColor;
@@ -51,10 +38,11 @@ private:
   QColor SelectedHaloColor;
   QColor HoveredColor;
 
+  QColor ConnectionPointColor;
+  QColor FilledConnectionPointColor;
+
   float LineWidth;
   float ConstructionLineWidth;
   float PointDiameter;
-
-  bool UseDataDefinedColors;
 };
 }

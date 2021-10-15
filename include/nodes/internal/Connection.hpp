@@ -120,6 +120,8 @@ public:
   bool
   complete() const;
 
+  QString styleId() const;
+
 public: // data propagation
 
   void

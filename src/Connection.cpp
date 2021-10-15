@@ -41,6 +41,8 @@ Connection(PortType portType,
   setNodeToPort(node, portType, portIndex);
 
   setRequiredPort(oppositePort(portType));
+
+  _connectionGeometry.setStyleId(styleId());
 }
 
 
@@ -60,6 +62,8 @@ Connection(Node& nodeIn,
 {
   setNodeToPort(nodeIn, PortType::In, portIndexIn);
   setNodeToPort(nodeOut, PortType::Out, portIndexOut);
+
+  _connectionGeometry.setStyleId(styleId());
 }
 
 
@@ -446,4 +450,12 @@ propagateEmptyData() const
   std::shared_ptr<NodeData> emptyData;
 
   propagateData(emptyData);
+}
+
+QString
+Connection::
+styleId() const
+{
+  auto portType = requiredPort()==PortType::None ? PortType::Out : requiredPort();
+  return dataType(portType).id;
 }

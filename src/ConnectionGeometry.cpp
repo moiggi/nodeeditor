@@ -79,9 +79,9 @@ boundingRect() const
   QRectF c1c2Rect = QRectF(points.first, points.second).normalized();
 
   auto const &connectionStyle =
-    StyleCollection::connectionStyle();
+    StyleCollection::connectionStyle(_styleId);
 
-  float const diam = connectionStyle.pointDiameter();
+  float const diam = connectionStyle.PointDiameter;
 
   QRectF commonRect = basicRect.united(c1c2Rect);
 

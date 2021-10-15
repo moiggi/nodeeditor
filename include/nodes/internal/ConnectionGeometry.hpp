@@ -4,6 +4,7 @@
 
 #include <QtCore/QPointF>
 #include <QtCore/QRectF>
+#include <QString>
 
 #include <iostream>
 
@@ -46,6 +47,8 @@ public:
   void
   setHovered(bool hovered) { _hovered = hovered; }
 
+  void setStyleId(const QString& styleId) { _styleId = styleId; }
+
 private:
   // local object coordinates
   QPointF _in;
@@ -56,5 +59,7 @@ private:
   double _lineWidth;
 
   bool _hovered;
+
+  QString _styleId;
 };
 }

@@ -23,9 +23,15 @@ nodeStyle(const QString& styleId)
 
 ConnectionStyle const&
 StyleCollection::
-connectionStyle()
+connectionStyle(const QString& styleId)
 {
-  return instance()._connectionStyle;
+  const auto& styles = instance()._connectionStyles;
+  auto s = styles.connectionStyles.find(styleId);
+  if (s != styles.connectionStyles.end()) {
+    return s->second;
+  } else {
+    return styles.baseStyle;
+  }
 }
 
 
@@ -47,9 +53,9 @@ setNodeStyle(NodeStyles nodeStyles)
 
 void
 StyleCollection::
-setConnectionStyle(ConnectionStyle connectionStyle)
+setConnectionStyle(ConnectionStyles connectionStyles)
 {
-  instance()._connectionStyle = std::move(connectionStyle);
+  instance()._connectionStyles = std::move(connectionStyles);
 }
 
 

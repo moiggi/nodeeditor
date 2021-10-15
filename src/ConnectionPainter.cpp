@@ -110,11 +110,11 @@ drawSketchLine(QPainter * painter,
   if (state.requiresPort())
   {
     auto const & connectionStyle =
-      QtNodes::StyleCollection::connectionStyle();
+      QtNodes::StyleCollection::connectionStyle(connection.styleId());
 
     QPen p;
-    p.setWidth(connectionStyle.constructionLineWidth());
-    p.setColor(connectionStyle.constructionColor());
+    p.setWidth(connectionStyle.ConstructionLineWidth);
+    p.setColor(connectionStyle.ConstructionColor);
     p.setStyle(Qt::DashLine);
 
     painter->setPen(p);
@@ -150,13 +150,13 @@ drawHoveredOrSelected(QPainter * painter,
     QPen p;
 
     auto const &connectionStyle =
-      QtNodes::StyleCollection::connectionStyle();
-    double const lineWidth     = connectionStyle.lineWidth();
+      QtNodes::StyleCollection::connectionStyle(connection.styleId());
+    double const lineWidth     = connectionStyle.LineWidth;
 
     p.setWidth(2 * lineWidth);
     p.setColor(selected ?
-               connectionStyle.selectedHaloColor() :
-               connectionStyle.hoveredColor());
+               connectionStyle.SelectedHaloColor :
+               connectionStyle.HoveredColor);
 
     painter->setPen(p);
     painter->setBrush(Qt::NoBrush);
@@ -184,33 +184,30 @@ drawNormalLine(QPainter * painter,
   // colors
 
   auto const &connectionStyle =
-    QtNodes::StyleCollection::connectionStyle();
+    QtNodes::StyleCollection::connectionStyle(connection.styleId());
 
-  QColor normalColorOut  = connectionStyle.normalColor();
-  QColor normalColorIn   = connectionStyle.normalColor();
-  QColor selectedColor = connectionStyle.selectedColor();
+  QColor normalColorOut  = connectionStyle.NormalColor;
+  QColor normalColorIn   = connectionStyle.NormalColor;
+  QColor selectedColor = connectionStyle.SelectedColor;
 
   bool gradientColor = false;
 
-  if (connectionStyle.useDataDefinedColors())
-  {
-    using QtNodes::PortType;
+  using QtNodes::PortType;
 
-    auto dataTypeOut = connection.dataType(PortType::Out);
-    auto dataTypeIn = connection.dataType(PortType::In);
+  auto dataTypeOut = connection.dataType(PortType::Out);
+  auto dataTypeIn = connection.dataType(PortType::In);
 
-    gradientColor = (dataTypeOut.id != dataTypeIn.id);
+  gradientColor = (dataTypeOut.id != dataTypeIn.id);
 
-    normalColorOut  = connectionStyle.normalColor(dataTypeOut.id);
-    normalColorIn   = connectionStyle.normalColor(dataTypeIn.id);
-    selectedColor = normalColorOut.darker(200);
-  }
+  normalColorOut  = connectionStyle.NormalColor;
+  normalColorIn   = connectionStyle.NormalColor;
+  selectedColor = normalColorOut.darker(200);
 
   // geometry
 
   ConnectionGeometry const& geom = connection.connectionGeometry();
 
-  double const lineWidth = connectionStyle.lineWidth();
+  double const lineWidth = connectionStyle.LineWidth;
 
   // draw normal line
   QPen p;
@@ -301,12 +298,12 @@ paint(QPainter* painter,
   QPointF const & sink   = geom.sink();
 
   auto const & connectionStyle =
-    QtNodes::StyleCollection::connectionStyle();
+    QtNodes::StyleCollection::connectionStyle(connection.styleId());
 
-  double const pointDiameter = connectionStyle.pointDiameter();
+  double const pointDiameter = connectionStyle.PointDiameter;
 
-  painter->setPen(connectionStyle.constructionColor());
-  painter->setBrush(connectionStyle.constructionColor());
+  painter->setPen(connectionStyle.ConstructionColor);
+  painter->setBrush(connectionStyle.ConstructionColor);
   double const pointRadius = pointDiameter / 2.0;
   painter->drawEllipse(source, pointRadius, pointRadius);
   painter->drawEllipse(sink, pointRadius, pointRadius);

@@ -3,7 +3,6 @@
 #include <QtCore/QFile>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
-#include <QtCore/QJsonValueRef>
 #include <QtCore/QJsonArray>
 
 #include <QDebug>
@@ -14,41 +13,11 @@ using QtNodes::NodeStyle;
 
 inline void initResources() { Q_INIT_RESOURCE(resources); }
 
-#define NODE_STYLE_READ_COLOR(values, variable) readColor(values, #variable, variable)
-#define NODE_STYLE_READ_FLOAT(values, variable) readFloat(values, #variable, variable)
+#define NODE_STYLE_READ_COLOR(values, variable) QtNodes::Style::readColor(values, #variable, variable)
+#define NODE_STYLE_READ_FLOAT(values, variable) QtNodes::Style::readFloat(values, #variable, variable)
 
 namespace
 {
-  void readColor(const QJsonObject& values, const char* variableName, QColor& variable)
-  {
-    auto value = values[variableName];
-    if (value.type() == QJsonValue::Undefined || value.type() == QJsonValue::Null) {
-      qDebug() << "Undefined value for parameter:" << variableName;
-    } else {
-      if (value.isArray()) {
-        auto colorArray = value.toArray();
-        std::vector<int> rgb;
-        rgb.reserve(3);
-        for (auto &&it: colorArray) {
-          rgb.push_back(it.toInt());
-        }
-        variable = QColor(rgb[0], rgb[1], rgb[2]);
-      } else {
-        variable = QColor(value.toString());
-      }
-    }
-  }
-
-  void readFloat(const QJsonObject& values, const char* variableName, float& variable)
-  {
-    auto value = values[variableName];
-    if (value.type() == QJsonValue::Undefined || value.type() == QJsonValue::Null) {
-      qDebug() << "Undefined value for parameter:" << variableName;
-    } else {
-      variable = static_cast<float>(value.toDouble());
-    }
-  }
-
   QtNodes::StyleCollection::NodeStyles loadNodeStyles(const QJsonDocument& json)
   {
     QJsonObject topLevelObject = json.object();
@@ -67,7 +36,6 @@ namespace
 
     return styles;
   }
-
 }
 
 NodeStyle::
@@ -151,8 +119,6 @@ void NodeStyle::loadStyle(const QJsonObject& style)
   NODE_STYLE_READ_COLOR(style, ShadowColor);
   NODE_STYLE_READ_COLOR(style, FontColor);
   NODE_STYLE_READ_COLOR(style, FontColorFaded);
-  NODE_STYLE_READ_COLOR(style, ConnectionPointColor);
-  NODE_STYLE_READ_COLOR(style, FilledConnectionPointColor);
   NODE_STYLE_READ_COLOR(style, WarningColor);
   NODE_STYLE_READ_COLOR(style, ErrorColor);
 

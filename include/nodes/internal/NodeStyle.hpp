@@ -29,11 +29,11 @@ public:
 
 private:
 
-  void loadJsonText(QString jsonText) override;
+  void loadJsonText(QString jsonText);
 
-  void loadJsonFile(QString fileName) override;
+  void loadJsonFile(QString fileName);
 
-  void loadJsonFromByteArray(QByteArray const &byteArray) override;
+  void loadJsonFromByteArray(QByteArray const &byteArray);
 
 public:
 
@@ -52,9 +52,6 @@ public:
   QColor ShadowColor;
   QColor FontColor;
   QColor FontColorFaded;
-
-  QColor ConnectionPointColor;
-  QColor FilledConnectionPointColor;
 
   QColor WarningColor;
   QColor ErrorColor;

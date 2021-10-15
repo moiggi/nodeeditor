@@ -122,7 +122,6 @@ drawConnectionPoints(QPainter* painter,
                      FlowScene const & scene)
 {
   NodeStyle const& nodeStyle      = model->nodeStyle();
-  auto const     &connectionStyle = StyleCollection::connectionStyle();
 
   float diameter = nodeStyle.ConnectionPointDiameter;
   auto  reducedDiameter = diameter * 0.6;
@@ -181,14 +180,8 @@ drawConnectionPoints(QPainter* painter,
         }
       }
 
-      if (connectionStyle.useDataDefinedColors())
-      {
-        painter->setBrush(connectionStyle.normalColor(dataType.id));
-      }
-      else
-      {
-        painter->setBrush(nodeStyle.ConnectionPointColor);
-      }
+      auto const & connectionStyle = StyleCollection::connectionStyle(dataType.id);
+      painter->setBrush(connectionStyle.ConnectionPointColor);
 
       painter->drawEllipse(p,
                            reducedDiameter * r,
@@ -206,7 +199,6 @@ drawFilledConnectionPoints(QPainter * painter,
                            NodeDataModel const * model)
 {
   NodeStyle const& nodeStyle       = model->nodeStyle();
-  auto const     & connectionStyle = StyleCollection::connectionStyle();
 
   auto diameter = nodeStyle.ConnectionPointDiameter;
 
@@ -222,17 +214,10 @@ drawFilledConnectionPoints(QPainter * painter,
       {
         auto const & dataType = model->dataType(portType, i);
 
-        if (connectionStyle.useDataDefinedColors())
-        {
-          QColor const c = connectionStyle.normalColor(dataType.id);
-          painter->setPen(c);
-          painter->setBrush(c);
-        }
-        else
-        {
-          painter->setPen(nodeStyle.FilledConnectionPointColor);
-          painter->setBrush(nodeStyle.FilledConnectionPointColor);
-        }
+        auto const & connectionStyle = StyleCollection::connectionStyle(dataType.id);
+        QColor const c = connectionStyle.FilledConnectionPointColor;
+        painter->setPen(c);
+        painter->setBrush(c);
 
         painter->drawEllipse(p,
                              diameter * 0.4,
