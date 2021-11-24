@@ -20,7 +20,7 @@ protected:
   {
     auto value = values[variableName];
     if (value.type() == QJsonValue::Undefined || value.type() == QJsonValue::Null) {
-      qDebug() << "Undefined value for parameter:" << variableName;
+      qDebug() << "Load style (read color): undefined value for parameter: " << variableName << " (use default)";
     } else {
       if (value.isArray()) {
         auto colorArray = value.toArray();
@@ -40,7 +40,7 @@ protected:
   {
     auto value = values[variableName];
     if (value.type() == QJsonValue::Undefined || value.type() == QJsonValue::Null) {
-      qDebug() << "Undefined value for parameter:" << variableName;
+      qDebug() << "Load style (read float): undefined value for parameter: " << variableName << " (use default)";
     } else {
       variable = static_cast<float>(value.toDouble());
     }
@@ -50,7 +50,7 @@ protected:
   {
     auto value = values[variableName];
     if (value.type() == QJsonValue::Undefined || value.type() == QJsonValue::Null) {
-      qDebug() << "Undefined value for parameter:" << variableName;
+      qDebug() << "Load style (read boolean): undefined value for parameter: " << variableName << " (use default)";
     } else {
       variable = value.toBool();
     }

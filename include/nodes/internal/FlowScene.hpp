@@ -134,6 +134,8 @@ Q_SIGNALS:
 
   void nodeContextMenu(Node& n, const QPointF& pos);
 
+  void focusNodeChanged(Node* newFocus, Node* oldFocus);
+
 private:
 
   using SharedConnection = std::shared_ptr<Connection>;

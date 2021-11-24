@@ -50,6 +50,15 @@ FlowScene(std::shared_ptr<DataModelRegistry> registry,
   connect(this, &FlowScene::connectionCreated, this, &FlowScene::setupConnectionSignals);
   connect(this, &FlowScene::connectionCreated, this, &FlowScene::sendConnectionCreatedToNodes);
   connect(this, &FlowScene::connectionDeleted, this, &FlowScene::sendConnectionDeletedToNodes);
+
+  connect(this, &QGraphicsScene::focusItemChanged,
+          this, [this](QGraphicsItem* newFocus, QGraphicsItem* oldFocus, Qt::FocusReason) {
+    auto* newObj =  dynamic_cast<NodeGraphicsObject*>(newFocus);
+    auto* oldObj =  dynamic_cast<NodeGraphicsObject*>(oldFocus);
+    Node* newNodeFocus = newObj ? &newObj->node() : nullptr;
+    Node* oldNodeFocus = oldObj ? &oldObj->node() : nullptr;
+    focusNodeChanged(newNodeFocus, oldNodeFocus);
+  });
 }
 
 FlowScene::
