@@ -14,16 +14,11 @@
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonArray>
 #include <QtCore/QtGlobal>
-#include <QtCore/QDebug>
 
 #include "Node.hpp"
 #include "NodeGraphicsObject.hpp"
-
-#include "NodeGraphicsObject.hpp"
 #include "ConnectionGraphicsObject.hpp"
-
 #include "Connection.hpp"
-
 #include "FlowView.hpp"
 #include "DataModelRegistry.hpp"
 
@@ -36,6 +31,22 @@ using QtNodes::NodeDataModel;
 using QtNodes::PortType;
 using QtNodes::PortIndex;
 using QtNodes::TypeConverter;
+
+namespace {
+Node* getNode(QGraphicsItem* item) {
+  if (item == nullptr) {
+    return nullptr;
+  }
+
+  // item could be a proxy widget, we want to get the top item (i.e. node)
+  while (item->parentItem()) {
+    item = item->parentItem();
+  }
+  auto* obj = dynamic_cast<NodeGraphicsObject*>(item);
+  Node* node = obj ? &obj->node() : nullptr;
+  return node;
+}
+} //namespace
 
 
 FlowScene::
@@ -53,11 +64,11 @@ FlowScene(std::shared_ptr<DataModelRegistry> registry,
 
   connect(this, &QGraphicsScene::focusItemChanged,
           this, [this](QGraphicsItem* newFocus, QGraphicsItem* oldFocus, Qt::FocusReason) {
-    auto* newObj =  dynamic_cast<NodeGraphicsObject*>(newFocus);
-    auto* oldObj =  dynamic_cast<NodeGraphicsObject*>(oldFocus);
-    Node* newNodeFocus = newObj ? &newObj->node() : nullptr;
-    Node* oldNodeFocus = oldObj ? &oldObj->node() : nullptr;
-    focusNodeChanged(newNodeFocus, oldNodeFocus);
+    Q_EMIT focusNodeChanged(getNode(newFocus), getNode(oldFocus));
+  });
+
+  connect(this, &QGraphicsScene::selectionChanged, this, [this]() {
+    Q_EMIT selectedNodeChanged(selectedNodes());
   });
 }
 

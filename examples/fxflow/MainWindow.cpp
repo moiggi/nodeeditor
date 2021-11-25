@@ -68,9 +68,16 @@ MainWindow::MainWindow(QWidget *parent)
     qInfo() << "context menu of node: " << n.nodeDataModel()->name() << " @ " << pos;
   });
   connect(scene, &FlowScene::focusNodeChanged, this, [](Node* newFocus, Node* oldFocus) {
-    qInfo() << "node focus changed: " << 
-      (newFocus ? newFocus->nodeDataModel()->name() : "null") << " <= " <<
-      (oldFocus ? oldFocus->nodeDataModel()->name() : "null");
+    qInfo() << "node focus changed: from" <<
+      (oldFocus ? oldFocus->nodeDataModel()->name() : "null") << " to " <<
+      (newFocus ? newFocus->nodeDataModel()->name() : "null");
+  });
+  connect(scene, &FlowScene::selectedNodeChanged, this, [](std::vector<Node*> nodes) {
+    QString selected("selected nodes = ");
+    for (auto* node : nodes) {
+      selected += node->nodeDataModel()->name();
+    }
+    qDebug() << selected;
   });
 
   int screenHeight = QGuiApplication::primaryScreen()->size().height();

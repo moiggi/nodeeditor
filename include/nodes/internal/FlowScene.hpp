@@ -6,7 +6,9 @@
 #include <unordered_map>
 #include <tuple>
 #include <functional>
+#include <vector>
 
+#include "Node.hpp"
 #include "QUuidStdHash.hpp"
 #include "Export.hpp"
 #include "DataModelRegistry.hpp"
@@ -17,8 +19,6 @@ namespace QtNodes
 {
 
 class NodeDataModel;
-class FlowItemInterface;
-class Node;
 class NodeGraphicsObject;
 class Connection;
 class ConnectionGraphicsObject;
@@ -135,6 +135,8 @@ Q_SIGNALS:
   void nodeContextMenu(Node& n, const QPointF& pos);
 
   void focusNodeChanged(Node* newFocus, Node* oldFocus);
+
+  void selectedNodeChanged(std::vector<Node*> selectedNodes);
 
 private:
 

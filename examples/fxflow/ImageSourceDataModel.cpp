@@ -51,7 +51,6 @@ ImageSourceDataModel::ImageSourceDataModel() {
           this, &ImageSourceDataModel::onImageButtonClicked);
 
   loadImage(":/images/SunnyDay.jpg");
-//  loadImage("/home/andy/DevHome/externals/nodeeditor/examples/fxflow/resources/SunnyDay.jpg");
 
   _imageButton->installEventFilter(this);
 }
